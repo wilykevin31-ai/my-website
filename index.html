@@ -2,11 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-
-<!-- ✅ 只留一個 viewport（手機不會亂縮放） -->
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>阿郎鹹酥雞 點餐</title>
 
 <style>
@@ -16,12 +12,12 @@ body{
   padding:10px;
   background:#f2f2f2;
 }
-h1{text-align:center;margin-bottom:10px;}
+h1{text-align:center;margin:10px 0;}
 
 .category{
-  margin:15px 0;
-  padding:12px;
-  border-radius:14px;
+  margin:16px 0;
+  padding:14px;
+  border-radius:16px;
 }
 .meat{background:#fff3e0;}
 .side{background:#e3f2fd;}
@@ -41,7 +37,7 @@ h1{text-align:center;margin-bottom:10px;}
 
 .item{
   background:#fff;
-  border-radius:10px;
+  border-radius:12px;
   padding:8px;
   text-align:center;
   box-shadow:0 2px 4px rgba(0,0,0,.1);
@@ -61,20 +57,19 @@ h1{text-align:center;margin-bottom:10px;}
   border:none;
   border-radius:50%;
   font-size:18px;
-  cursor:pointer;
-  background:#ffcc80;
+  background:#ffd180;
 }
 .qty{min-width:20px;}
 
 #panel{
   background:#fff;
   margin-top:20px;
-  padding:12px;
-  border-radius:14px;
+  padding:14px;
+  border-radius:16px;
 }
 textarea{
   width:100%;
-  height:60px;
+  height:70px;
   resize:none;
 }
 .total{
@@ -92,8 +87,7 @@ button.main{
   padding:10px;
   font-size:16px;
   border:none;
-  border-radius:8px;
-  cursor:pointer;
+  border-radius:10px;
 }
 .copy{background:#4caf50;color:#fff;}
 .clear{background:#f44336;color:#fff;}
@@ -107,7 +101,7 @@ button.main{
 
 <div id="panel">
   <textarea id="output" placeholder="尚未點餐" readonly></textarea>
-  <div class="total">總金額：<span id="total-price">$0</span></div>
+  <div class="total">總金額：<span id="total">$0</span></div>
   <div class="actions">
     <button class="main copy" onclick="copyOrder()">複製點餐</button>
     <button class="main clear" onclick="clearOrder()">清空</button>
@@ -115,33 +109,42 @@ button.main{
 </div>
 
 <script>
-const categories=[
-{ name:'🍗 肉類 / 海鮮', class:'meat', items:[
-['香酥雞排',80],['黃金魚塊',60],['炸龍珠',60],['雞軟骨',60],['無骨鹹酥雞',60],
-['深海魷魚',60],['紐澳良二節翅',50],['柳葉魚',25],
-['雞皮',25],['雞屁股',25],['雞胗',25],['雞心',25],
-['龍鳳腿',20],['鑫鑫腸',20],['貢丸',20],
-['花枝丸',25],['九層塔花枝丸',25],
-['鱈魚條',25],['鱈魚脆丸',25],['黃金魚丸',25]
+const categories = [
+{
+  name:'🍗 肉類 / 海鮮', class:'meat', items:[
+  ['香酥雞排',80],['黃金魚塊',60],['炸龍珠',60],['雞軟骨',60],
+  ['無骨鹹酥雞',60],['深海魷魚',60],['紐澳良二節翅',50],
+  ['柳葉魚',25],['雞皮',25],['雞屁股',25],['雞胗',25],
+  ['雞心',25],['龍鳳腿',20],['鑫鑫腸',20],['貢丸',20],
+  ['花枝丸',25],['九層塔花枝丸',25],['鱈魚條',25],
+  ['鱈魚脆丸',25],['黃金魚丸',25]
 ]},
-{ name:'🥓 加工 / 配料', class:'side', items:[
-['小香腸',25],['一口吃香腸',30],['熱狗棒',20],['小熱狗',20],
-['糯米腸',20],['米血糕',15],['豆干',15],['百葉豆腐',20],
-['蘿蔔糕',25],['手工黑輪片',30],['魚板',20],['竹輪',20],
-['麥克雞塊',35],['脆薯',30],['洋蔥圈',30],
-['炸蝦餅乾',30],['香草馬鈴薯丸',30],['翹翹薯',30]
+{
+  name:'🥓 加工 / 配料', class:'side', items:[
+  ['小香腸',25],['一口吃香腸',30],['起司條',25],['腐皮捲',25],
+  ['甜不辣',25],['小肉豆',30],['手工黑輪片',30],
+  ['魚板',20],['芋簽',20],['糯米腸',20],['米血糕',15],
+  ['豆干',15],['百葉豆腐',20],['蘿蔔糕',25],
+  ['熱狗棒',20],['小熱狗',20],['麥克雞塊',35],
+  ['脆薯',30],['洋蔥圈',30],['炸蝦餅乾',30],
+  ['香草馬鈴薯丸',30],['翹翹薯',30]
 ]},
-{ name:'🥬 蔬菜 / 甜點', class:'veg', items:[
-['甘梅地瓜',30],['芋泥地瓜球',30],['芋米布丁酥',30],['芋粿巧',25],
-['芋頭絣',20],['肉鬆芋條',25],['馬鈴薯條',20],['薯餅',15],
-['雞蛋豆腐',55],['玉米筍',40],['杏鮑菇',35],['香菇',35],
-['花椰菜',35],['四季豆',25],['青椒',25],['小黃瓜',25],
-['炸湯圓',25],['銀絲卷',25],['黑糖麻花捲',25]
+{
+  name:'🥬 蔬菜 / 甜點', class:'veg', items:[
+  ['甘梅地瓜',30],['芋泥地瓜球',30],['芋米布丁酥',30],
+  ['芋粿巧',25],['芋頭絣',20],['肉鬆芋條',25],
+  ['馬鈴薯條',20],['薯餅',15],['雞蛋豆腐',55],
+  ['玉米筍',40],['杏鮑菇',35],['香菇',35],
+  ['花椰菜',35],['四季豆',25],['青椒',25],
+  ['小黃瓜',25],['炸湯圓',25],['銀絲卷',25],
+  ['黑糖麻花捲',25]
 ]}
 ];
 
-let order={};
-const menu=document.getElementById('menu');
+const order = {};
+const menu = document.getElementById('menu');
+const output = document.getElementById('output');
+const totalEl = document.getElementById('total');
 
 categories.forEach(cat=>{
   const box=document.createElement('div');
@@ -152,9 +155,9 @@ categories.forEach(cat=>{
 
   cat.items.forEach(([n,p])=>{
     order[n]=0;
-    const item=document.createElement('div');
-    item.className='item';
-    item.innerHTML=`
+    const d=document.createElement('div');
+    d.className='item';
+    d.innerHTML=`
       <div>${n}</div>
       <div class="price">$${p}</div>
       <div class="ctrl">
@@ -162,58 +165,48 @@ categories.forEach(cat=>{
         <span class="qty" id="q-${n}">0</span>
         <button onclick="chg('${n}',1)">+</button>
       </div>`;
-    grid.appendChild(item);
+    grid.appendChild(d);
   });
 
   box.appendChild(grid);
   menu.appendChild(box);
 });
 
-function chg(name,delta){
-  order[name]=Math.max(0,(order[name]||0)+delta);
+function chg(n,d){
+  order[n]=Math.max(0,order[n]+d);
   render();
 }
 
 function render(){
   let total=0, list=[];
-  categories.forEach(cat=>{
-    cat.items.forEach(([n,p])=>{
-      document.getElementById(`q-${n}`).innerText=order[n];
-      if(order[n]>0){
-        total+=order[n]*p;
-        list.push(`${n}x${order[n]}`);
-      }
-    });
-  });
+  categories.forEach(c=>c.items.forEach(([n,p])=>{
+    document.getElementById(`q-${n}`).innerText=order[n];
+    if(order[n]>0){
+      total+=order[n]*p;
+      list.push(`${n}x${order[n]}`);
+    }
+  }));
   output.value=list.join(' ');
-  document.getElementById('total-price').innerText=`$${total}`;
+  totalEl.innerText=`$${total}`;
 }
 
-// ✅ HTTPS 優先 + fallback（最穩）
 async function copyOrder(){
   if(!output.value) return alert('尚未點餐');
-
-  const text=`點餐：${output.value}\n總金額：${document.getElementById('total-price').innerText}`;
-
-  if(navigator.clipboard && location.protocol==='https:'){
-    try{
-      await navigator.clipboard.writeText(text);
-      alert('✅ 已複製到剪貼簿');
-      return;
-    }catch(e){}
+  const text=`點餐：${output.value}\n總金額：${totalEl.innerText}`;
+  try{
+    await navigator.clipboard.writeText(text);
+    alert('✅ 已複製');
+  }catch{
+    const t=document.createElement('textarea');
+    t.value=text;document.body.appendChild(t);
+    t.select();document.execCommand('copy');
+    document.body.removeChild(t);
+    alert('已複製');
   }
-
-  const t=document.createElement('textarea');
-  t.value=text;
-  document.body.appendChild(t);
-  t.select();
-  document.execCommand('copy');
-  document.body.removeChild(t);
-  alert('已複製');
 }
 
 function clearOrder(){
-  for(const k in order) order[k]=0;
+  Object.keys(order).forEach(k=>order[k]=0);
   render();
 }
 </script>
