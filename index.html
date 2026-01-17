@@ -2,7 +2,11 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ✅ 只留一個 viewport（手機不會亂縮放） -->
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>阿郎鹹酥雞 點餐</title>
 
 <style>
@@ -166,7 +170,7 @@ categories.forEach(cat=>{
 });
 
 function chg(name,delta){
-  order[name]=Math.max(0,order[name]+delta);
+  order[name]=Math.max(0,(order[name]||0)+delta);
   render();
 }
 
@@ -185,25 +189,29 @@ function render(){
   document.getElementById('total-price').innerText=`$${total}`;
 }
 
-// 在 HTTPS 下更優雅的寫法
-async function copyOrder() {
-  if (!output.value) return alert('尚未點餐');
-  const text = `點餐：${output.value}\n總金額：${document.getElementById('total-price').innerText}`;
-  
-  try {
-    await navigator.clipboard.writeText(text);
-    alert('✅ 已複製到剪貼簿！');
-  } catch (err) {
-    // 備援方案：若瀏覽器權限拒絕
-    const t = document.createElement('textarea');
-    t.value = text;
-    document.body.appendChild(t);
-    t.select();
-    document.execCommand('copy');
-    document.body.removeChild(t);
-    alert('已複製');
+// ✅ HTTPS 優先 + fallback（最穩）
+async function copyOrder(){
+  if(!output.value) return alert('尚未點餐');
+
+  const text=`點餐：${output.value}\n總金額：${document.getElementById('total-price').innerText}`;
+
+  if(navigator.clipboard && location.protocol==='https:'){
+    try{
+      await navigator.clipboard.writeText(text);
+      alert('✅ 已複製到剪貼簿');
+      return;
+    }catch(e){}
   }
+
+  const t=document.createElement('textarea');
+  t.value=text;
+  document.body.appendChild(t);
+  t.select();
+  document.execCommand('copy');
+  document.body.removeChild(t);
+  alert('已複製');
 }
+
 function clearOrder(){
   for(const k in order) order[k]=0;
   render();
