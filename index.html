@@ -1,292 +1,420 @@
-# 阿郎鹹酥雞｜最新點餐系統（index.html）
-
-```html
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>阿郎鹹酥雞 點餐</title>
-
+<title>阿郎鹹酥雞｜手機點餐</title>
 <style>
+*{box-sizing:border-box}
 body{
-  font-family:"Microsoft JhengHei",sans-serif;
+  font-family:"Microsoft JhengHei","Noto Sans TC",Arial,sans-serif;
   margin:0;
   padding:10px;
-  background:#f2f2f2;
+  background:#f5f5f5;
+  color:#222;
 }
-h1{text-align:center;margin:10px 0;}
-
-.category{
-  margin:16px 0;
-  padding:14px;
-  border-radius:16px;
-}
-.meat{background:#fff3e0;}
-.side{background:#e3f2fd;}
-.veg{background:#e8f5e9;}
-
-.category-title{
-  font-size:20px;
-  font-weight:bold;
+.header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#fff;
+  border-radius:14px;
+  padding:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
   margin-bottom:10px;
 }
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-  gap:10px;
+h1{
+  margin:0;
+  text-align:center;
+  font-size:24px;
 }
-
-.item{
-  background:#fff;
+.phone{
+  text-align:center;
+  font-size:14px;
+  margin-top:4px;
+  color:#555;
+}
+.summary{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+.summary .box{
+  flex:1;
+  background:#fff7e6;
   border-radius:12px;
   padding:8px;
   text-align:center;
-  box-shadow:0 2px 4px rgba(0,0,0,.1);
+  font-weight:bold;
 }
+#total-price{
+  color:#d32f2f;
+  font-size:22px;
+}
+.category{
+  margin:12px 0;
+  padding:10px;
+  border-radius:16px;
+}
+.meat{background:#fff3e0}
+.side{background:#e3f2fd}
+.snack{background:#f3e5f5}
+.veg{background:#e8f5e9}
 
-.price{color:#e53935;font-size:14px;margin-top:2px;}
-
+.category-title{
+  font-size:20px;
+  font-weight:800;
+  margin-bottom:8px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+}
+.item{
+  background:#fff;
+  border-radius:14px;
+  padding:8px;
+  text-align:center;
+  box-shadow:0 1px 4px rgba(0,0,0,.12);
+}
+.item-name{
+  font-size:15px;
+  font-weight:700;
+  min-height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1.2;
+}
+.price{
+  color:#e53935;
+  font-weight:bold;
+  margin:4px 0;
+}
 .ctrl{
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  margin-top:6px;
+  justify-content:space-between;
+  gap:6px;
 }
 .ctrl button{
-  width:32px;
-  height:32px;
+  width:42px;
+  height:42px;
   border:none;
   border-radius:50%;
-  font-size:18px;
-  background:#ffd180;
+  font-size:24px;
+  font-weight:bold;
   cursor:pointer;
 }
-.qty{min-width:20px;}
-
-#panel{
+.minus{background:#ffcdd2;color:#b71c1c}
+.plus{background:#c8e6c9;color:#1b5e20}
+.qty{
+  min-width:32px;
+  font-size:20px;
+  font-weight:bold;
+}
+.panel{
   background:#fff;
-  margin-top:20px;
-  padding:14px;
   border-radius:16px;
+  padding:12px;
+  margin:14px 0 80px;
+  box-shadow:0 1px 5px rgba(0,0,0,.12);
+}
+.panel h2{
+  margin:0 0 8px;
+  font-size:20px;
 }
 textarea{
   width:100%;
-  height:70px;
+  height:86px;
   resize:none;
+  border:1px solid #ccc;
+  border-radius:10px;
+  padding:8px;
+  font-size:15px;
 }
-.total{
-  text-align:right;
-  font-size:18px;
-  margin-top:6px;
+.flavor{
+  margin-top:10px;
+  padding:10px;
+  border-radius:12px;
+  background:#fafafa;
+}
+.flavor-title{
+  font-weight:bold;
+  margin:8px 0 4px;
+}
+.options{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.options label{
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:15px;
 }
 .actions{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  z-index:20;
+  background:#fff;
+  padding:8px;
   display:flex;
-  gap:10px;
-  margin-top:10px;
+  gap:8px;
+  box-shadow:0 -2px 8px rgba(0,0,0,.15);
 }
-button.main{
+.actions button{
   flex:1;
-  padding:10px;
-  font-size:16px;
   border:none;
-  border-radius:10px;
-  cursor:pointer;
+  border-radius:12px;
+  padding:14px 8px;
+  font-size:17px;
+  font-weight:bold;
+  color:#fff;
 }
-.copy{background:#4caf50;color:#fff;}
-.clear{background:#f44336;color:#fff;}
+.copy{background:#43a047}
+.clear{background:#e53935}
+@media (min-width:720px){
+  body{max-width:760px;margin:auto}
+  .grid{grid-template-columns:repeat(3,1fr)}
+}
 </style>
 </head>
 
 <body>
-<h1>阿郎鹹酥雞 🍗</h1>
+<div class="header">
+  <h1>阿郎鹹酥雞 🍗</h1>
+  <div class="phone">訂購專線：0972-858-588</div>
+  <div class="summary">
+    <div class="box">品項數：<span id="item-count">0</span></div>
+    <div class="box">總金額：<span id="total-price">$0</span></div>
+  </div>
+</div>
 
 <div id="menu"></div>
 
-<div id="panel">
+<div class="panel">
+  <h2>🧾 點餐明細</h2>
   <textarea id="output" placeholder="尚未點餐" readonly></textarea>
-  <div class="total">總金額：<span id="total">$0</span></div>
-  <div class="actions">
-    <button class="main copy" onclick="copyOrder()">複製點餐</button>
-    <button class="main clear" onclick="clearOrder()">清空</button>
+
+  <div class="flavor">
+    <div class="flavor-title">胡椒</div>
+    <div class="options">
+      <label><input type="radio" name="pepper" value="不加胡椒"> 不加</label>
+      <label><input type="radio" name="pepper" value="一點點胡椒"> 一點點</label>
+      <label><input type="radio" name="pepper" value="正常胡椒" checked> 正常</label>
+    </div>
+
+    <div class="flavor-title">辣椒</div>
+    <div class="options">
+      <label><input type="radio" name="spicy" value="不辣" checked> 不辣</label>
+      <label><input type="radio" name="spicy" value="小辣"> 小辣</label>
+      <label><input type="radio" name="spicy" value="中辣"> 中辣</label>
+      <label><input type="radio" name="spicy" value="大辣"> 大辣</label>
+    </div>
+
+    <div class="flavor-title">蒜頭</div>
+    <div class="options">
+      <label><input type="radio" name="garlic" value="不加蒜" checked> 不加蒜</label>
+      <label><input type="radio" name="garlic" value="加蒜"> 加蒜</label>
+    </div>
   </div>
+</div>
+
+<div class="actions">
+  <button class="copy" onclick="copyOrder()">複製點餐</button>
+  <button class="clear" onclick="clearOrder()">清空</button>
 </div>
 
 <script>
 const categories = [
-
 {
   name:'🍗 肉類 / 海鮮',
   class:'meat',
   items:[
-
     ['香酥雞排',85],
-    ['黃金魚條(份)',70],
-    ['炸雞排(份)',70],
+    ['黃金魚塊(份)',70],
+    ['炸龍珠(份)',70],
     ['深海魷魚(份)',70],
-
     ['雞軟骨(份)',60],
     ['無骨鹹酥雞(份)',60],
-    ['脆皮雞排(份)',50],
-
+    ['紐澳良二節翅(份)',50],
+    ['甘梅地瓜(份)',30],
+    ['小肉豆(份)',30],
+    ['手工黑輪片',30],
+    ['一口吃香腸(串)',30],
     ['花枝丸(串)',25],
     ['九層塔花枝丸(串)',25],
     ['鱈魚條(串)',25],
     ['鱈魚脆丸(串)',25],
     ['黃金魚丸(串)',25],
-
     ['雞屁股(串)',25],
     ['雞胗(串)',25],
     ['雞心(串)',25],
-
-    ['雞脖(串)',20],
-    ['寶丸(串)',20],
-    ['龍鳳腿(支)',20],
-
-    ['蝦球(串)',30],
-    ['蝦捲(條)',30],
-
-    ['脆皮(份)',25],
-    ['柳葉魚(2條)',25]
+    ['鑫鑫腸(串)',20],
+    ['貢丸(串)',20],
+    ['龍鳳腿(支)',20]
   ]
 },
-
 {
   name:'🥓 加工 / 配料',
   class:'side',
   items:[
-
-    ['小肉豆(份)',30],
-    ['手工黑輪片',30],
-    ['一口吃香腸(串)',30],
-
-    ['脆皮糯米腸(條)',25],
-    ['百頁豆腐(條)',25],
-    ['蘿蔔糕(條)',25],
-    ['芋粿巧(條)',25],
-    ['魚板(條)',25],
-    ['青椒條(條)',25],
-
+    ['蝦球(串)',30],
+    ['蝦捲(條)',30],
+    ['甜不辣(3塊)',25],
+    ['百頁豆腐(塊)',25],
+    ['蘿蔔糕(塊)',25],
+    ['芋粿巧(塊)',25],
+    ['魚板(塊)',25],
+    ['腐皮捲(條)',25],
+    ['雞皮(份)',25],
+    ['柳葉魚(2條)',25],
     ['小香腸(2條)',25],
-
-    ['芋簽(份)',20],
+    ['芋簽(甜)',20],
     ['糯米腸(條)',20],
     ['小熱狗(3條)',20],
     ['竹輪(條)',20],
-
-    ['米血糕(條)',15],
-    ['豆干(3塊)',15],
-
+    ['米血糕(塊)',15],
+    ['豆干(3塊)',15]
+  ]
+},
+{
+  name:'🍟 炸物 / 點心',
+  class:'snack',
+  items:[
     ['炸湯圓(份)',25],
-    ['銀絲卷(份)',25],
-    ['黑糖麻花捲(條)',25],
-
+    ['銀絲卷(條)',25],
+    ['黑糖麻花卷(條)',25],
+    ['加煉乳(包)',10],
     ['麥克雞塊(份)',35],
     ['脆薯(份)',30],
     ['洋蔥圈(份)',30],
-    ['炸薯餅乾(份)',30],
+    ['炸蝦餅乾(份)',30],
     ['香草馬鈴薯丸(份)',30],
-
-    ['蝦捲(條)',30],
-
+    ['翹翹薯(份)',30],
     ['芋泥地瓜球(份)',30],
     ['玉米布丁酥(份)',30],
-
     ['起司條(2條)',25],
     ['肉鬆芋條(3條)',25],
-
     ['熱狗棒(甜、普)',25],
-
-    ['芋頭籤條(份)',20],
-    ['芋圓餅(3顆)',20],
-
+    ['馬鈴薯條(份)',20],
+    ['芋頭餅(3個)',20],
     ['薯餅(塊)',15]
   ]
 },
-
 {
   name:'🥬 蔬菜 / 豆腐',
   class:'veg',
   items:[
-
-    ['韓國豆腐(塊)',55],
-
+    ['雞蛋豆腐(塊)',55],
     ['玉米筍',40],
-
     ['杏鮑菇',35],
     ['香菇',35],
     ['花椰菜',35],
     ['四季豆',35],
-
     ['青椒',25],
     ['小黃瓜',25]
   ]
 }
-
 ];
 
 const order = {};
 const menu = document.getElementById('menu');
 const output = document.getElementById('output');
-const totalEl = document.getElementById('total');
+const totalPrice = document.getElementById('total-price');
+const itemCount = document.getElementById('item-count');
 
-categories.forEach(cat=>{
-  const box=document.createElement('div');
-  box.className=`category ${cat.class}`;
-  box.innerHTML=`<div class="category-title">${cat.name}</div>`;
-  const grid=document.createElement('div');
-  grid.className='grid';
+categories.forEach((cat, ci)=>{
+  const box = document.createElement('section');
+  box.className = `category ${cat.class}`;
+  box.innerHTML = `<div class="category-title">${cat.name}</div>`;
 
-  cat.items.forEach(([n,p])=>{
-    order[n]=0;
-    const d=document.createElement('div');
-    d.className='item';
-    d.innerHTML=`
-      <div>${n}</div>
-      <div class="price">$${p}</div>
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+
+  cat.items.forEach(([name, price], ii)=>{
+    const id = `q-${ci}-${ii}`;
+    order[name] = 0;
+
+    const item = document.createElement('div');
+    item.className = 'item';
+    item.innerHTML = `
+      <div class="item-name">${name}</div>
+      <div class="price">$${price}</div>
       <div class="ctrl">
-        <button onclick="chg('${n}',-1)">−</button>
-        <span class="qty" id="q-${n}">0</span>
-        <button onclick="chg('${n}',1)">+</button>
-      </div>`;
-    grid.appendChild(d);
+        <button class="minus" type="button" onclick="changeQty('${name}', -1)">−</button>
+        <span class="qty" id="${id}">0</span>
+        <button class="plus" type="button" onclick="changeQty('${name}', 1)">+</button>
+      </div>
+    `;
+    grid.appendChild(item);
   });
 
   box.appendChild(grid);
   menu.appendChild(box);
 });
 
-function chg(n,d){
-  order[n]=Math.max(0,order[n]+d);
+function changeQty(name, delta){
+  order[name] = Math.max(0, (order[name] || 0) + delta);
   render();
 }
 
+function getFlavorText(){
+  const pepper = document.querySelector('input[name="pepper"]:checked')?.value || '';
+  const spicy = document.querySelector('input[name="spicy"]:checked')?.value || '';
+  const garlic = document.querySelector('input[name="garlic"]:checked')?.value || '';
+  return `${pepper}、${spicy}、${garlic}`;
+}
+
 function render(){
-  let total=0, list=[];
-  categories.forEach(c=>c.items.forEach(([n,p])=>{
-    document.getElementById(`q-${n}`).innerText=order[n];
-    if(order[n]>0){
-      total+=order[n]*p;
-      list.push(`${n}x${order[n]}`);
-    }
-  }));
-  output.value=list.join(' ');
-  totalEl.innerText=`$${total}`;
+  let total = 0;
+  let count = 0;
+  const list = [];
+
+  categories.forEach((cat, ci)=>{
+    cat.items.forEach(([name, price], ii)=>{
+      const qty = order[name] || 0;
+      const qEl = document.getElementById(`q-${ci}-${ii}`);
+      if(qEl) qEl.innerText = qty;
+
+      if(qty > 0){
+        total += qty * price;
+        count += qty;
+        list.push(`${name}x${qty}`);
+      }
+    });
+  });
+
+  output.value = list.join(' ');
+  totalPrice.innerText = `$${total}`;
+  itemCount.innerText = count;
 }
 
 async function copyOrder(){
   if(!output.value) return alert('尚未點餐');
-  const text=`點餐：${output.value}\n總金額：${totalEl.innerText}`;
+
+  const text =
+`點餐：${output.value}
+調味：${getFlavorText()}
+總金額：${totalPrice.innerText}`;
+
   try{
     await navigator.clipboard.writeText(text);
-    alert('✅ 已複製');
-  }catch{
-    const t=document.createElement('textarea');
-    t.value=text;document.body.appendChild(t);
-    t.select();document.execCommand('copy');
-    document.body.removeChild(t);
-    alert('已複製');
+    alert('✅ 已複製點餐');
+  }catch(e){
+    const temp = document.createElement('textarea');
+    temp.value = text;
+    document.body.appendChild(temp);
+    temp.select();
+    document.execCommand('copy');
+    document.body.removeChild(temp);
+    alert('已複製點餐');
   }
 }
 
@@ -297,4 +425,3 @@ function clearOrder(){
 </script>
 </body>
 </html>
-```
